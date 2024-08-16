@@ -4,7 +4,8 @@ using UnityEngine;
 public class ParticleManager : MonoBehaviour
 {
     [SerializeField] GameObject particle;
-    [SerializeField] float cooldownTime;
+    [SerializeField] float baseCooldownTime;
+    [SerializeField] float voidCooldownMultiplier = 2f; // Multiplier to increase cooldown in void environment
     [SerializeField] float maxAngleDeviation = 45f; // Angle in degrees
     [SerializeField] float spawnOffset = 1.5f; // Multiplier for offsetting particles beyond the edge
 
@@ -37,6 +38,16 @@ public class ParticleManager : MonoBehaviour
     IEnumerator Cooldown()
     {
         onCooldown = true;
+
+        // Get the current environment from the EnvironmentManager
+        var environmentManager = EnvironmentManager.Instance;
+        float cooldownTime = baseCooldownTime;
+
+        if (environmentManager != null && environmentManager.currentEnvironment == EnvironmentManager.Environment.Void)
+        {
+            cooldownTime *= voidCooldownMultiplier; // Increase cooldown in Void environment
+        }
+
         yield return new WaitForSeconds(cooldownTime);
         onCooldown = false;
     }
