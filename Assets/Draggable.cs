@@ -3,7 +3,7 @@ using UnityEngine;
 public class Draggable : MonoBehaviour
 {
     bool isDragging = false;
-    float clickableRadius = 0.1f;
+    readonly float clickableRadius = 0.1f;
     Vector3 mousePosition;
 
     void Update()
@@ -14,12 +14,12 @@ public class Draggable : MonoBehaviour
 
     void HandleInput()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.MousePositionInput);
 
-        if (Input.GetMouseButtonDown(0))
+        if (InputManager.Instance.LeftMouseInput)
             OnMouseDown();
 
-        if (Input.GetMouseButtonUp(0))
+        if (!InputManager.Instance.LeftMouseInput)
             OnMouseUp();
     }
 

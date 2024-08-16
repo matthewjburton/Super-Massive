@@ -7,6 +7,8 @@ public class Particle : MonoBehaviour
     public float speed;
     [SerializeField] float growthModifer;
 
+    [SerializeField] AudioClip[] fusionSounds;
+
     public static event Action<float> OnMassChanged; // Event for mass change
 
     void Start()
@@ -29,6 +31,8 @@ public class Particle : MonoBehaviour
     void CombineParticles(GameObject other)
     {
         Destroy(other);
+
+        SoundManager.Instance.PlayRandomSound(fusionSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - mass) / 1), 1));
 
         transform.localScale *= growthModifer;
         mass = transform.localScale.x;
