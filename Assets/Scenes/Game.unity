@@ -6156,7 +6156,7 @@ GameObject:
   - component: {fileID: 1696227850}
   - component: {fileID: 1696227849}
   m_Layer: 5
-  m_Name: Mass Slider
+  m_Name: Fusions Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6195,10 +6195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a28d89aa4f677440b1ec3d2e3e18a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  criticalMass: 25
-  totalMass: 0
-  massModifier: 2
-  massSlider: {fileID: 0}
+  maxFusions: 0
+  fusionsSlider: {fileID: 0}
 --- !u!114 &1696227850
 MonoBehaviour:
   m_ObjectHideFlags: 0

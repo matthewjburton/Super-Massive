@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -10,27 +9,14 @@ public class CameraController : MonoBehaviour
 
     void OnEnable()
     {
-        Particle.OnMassChanged += HandleMassChanged;
         EnvironmentManager.OnEnvironmentChanged += HandleEnvironmentChanged;
     }
 
     void OnDisable()
     {
-        Particle.OnMassChanged -= HandleMassChanged;
         EnvironmentManager.OnEnvironmentChanged -= HandleEnvironmentChanged;
     }
 
-    void HandleMassChanged(float newMass)
-    {
-        // Update largest mass if necessary
-        if (newMass > largestMass)
-        {
-            largestMass = newMass;
-
-            // Calculate target orthographic size based on largest mass
-            targetOrthographicSize = largestMass * settings.sizeMultiplier + settings.minSize;
-        }
-    }
 
     private void HandleEnvironmentChanged(Environment environment)
     {
@@ -45,6 +31,12 @@ public class CameraController : MonoBehaviour
 
     void SetOrthographicSize()
     {
+        GameObject largestParticle = ParticleManager.Instance.LargestParticle;
+        if (!largestParticle)
+            return;
+
+        targetOrthographicSize = largestParticle.GetComponent<Particle>().mass * settings.sizeMultiplier + settings.minSize;
+
         // Smoothly transition to the target orthographic size
         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, Time.deltaTime * settings.zoomSpeed);
     }

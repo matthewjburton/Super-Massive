@@ -247,7 +247,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: BLACKHOLE
+  m_text: Super Massive
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c5423bfc710a42f4d90b04e142b81106, type: 2}
   m_sharedMaterial: {fileID: 7668923019955867065, guid: c5423bfc710a42f4d90b04e142b81106, type: 2}

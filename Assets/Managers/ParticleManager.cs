@@ -1,18 +1,30 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class ParticleManager : MonoBehaviour
 {
+    public static ParticleManager Instance { get; private set; }
+    public GameObject LargestParticle { get; private set; }
     [SerializeField] GameObject particle;
     [SerializeField] float baseCooldownTime;
     [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
 
     bool onCooldown;
 
+    void Start()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this);
+    }
+
     // Update is called once per frame
     void Update()
     {
         SpawnParticle();
+        UpdateLargestParticle();
     }
 
     void SpawnParticle()
@@ -72,4 +84,22 @@ public class ParticleManager : MonoBehaviour
         return position;
     }
 
+    void UpdateLargestParticle()
+    {
+        // Find the largest particle currently on screen
+        var particles = FindObjectsOfType<Particle>()
+            .Where(p => IsInView(p.transform.position)) // Filter to only those in view
+            .OrderByDescending(p => p.mass) // Order by mass, descending
+            .FirstOrDefault();
+
+        LargestParticle = particles?.gameObject;
+    }
+
+    bool IsInView(Vector3 worldPosition)
+    {
+        Vector3 viewportPosition = Camera.main.WorldToViewportPoint(worldPosition);
+        return viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
+               viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
+               viewportPosition.z > 0; // z > 0 means the object is in front of the camera
+    }
 }
