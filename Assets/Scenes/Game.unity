@@ -5246,7 +5246,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle: {fileID: 2029770841888434842, guid: e51470b9d5b3e974187ad0695dc576f0, type: 3}
   baseCooldownTime: 1
-  maxAngleDeviation: 45
   spawnOffset: 1.1
 --- !u!4 &1047530049
 Transform:

@@ -58,6 +58,9 @@ public class EnvironmentManager : MonoBehaviour
         ParticleSystem starsParticleSystem = GameObject.Find("Stars").GetComponent<ParticleSystem>();
         var emission = starsParticleSystem.emission;
         emission.enabled = environment.showStars;
+
+        // Trigger the environment change event
+        OnEnvironmentChanged?.Invoke(environment);
     }
 
     void NewEnvironment()

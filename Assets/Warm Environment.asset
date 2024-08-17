@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environment: 1
   spawnModifier: 0.5
-  speedMultiplier: 10
+  speedMultiplier: 3
   backgroundColor: {r: 0.18490559, g: 0.16455434, b: 0.12385185, a: 0}
   showStars: 1

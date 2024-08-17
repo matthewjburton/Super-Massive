@@ -25,6 +25,8 @@ public class Particle : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
 
+        rb.mass = mass;
+
         Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
         rb.velocity = direction * speed;
 
@@ -94,6 +96,8 @@ public class Particle : MonoBehaviour
         transform.localScale *= growthModifer;
         mass = transform.localScale.x;
         speed /= mass;
+
+        rb.mass = mass;
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
