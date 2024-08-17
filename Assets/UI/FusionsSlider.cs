@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class FusionsSlider : MonoBehaviour
 {
     [SerializeField] int maxFusions;
+    public int mostFusions;
     public Slider fusionsSlider;
 
     void Start()
@@ -15,7 +16,7 @@ public class FusionsSlider : MonoBehaviour
 
     void Update()
     {
-        int mostFusions = CalculateCombinations(ParticleManager.Instance.LargestParticle.GetComponent<Particle>());
+        mostFusions = CalculateCombinations(ParticleManager.Instance.LargestParticle.GetComponent<Particle>());
         fusionsSlider.value = mostFusions;
 
         if (fusionsSlider.value > maxFusions)

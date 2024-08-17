@@ -13,12 +13,12 @@ public class AntiParticleManager : MonoBehaviour
     [Header("Controlling when antimatter starts spawing")]
     [Range(0, 1), SerializeField, Tooltip("A decimal representing the percent of mass towards critical mass that the player must reach before spawning spawning antimatter")]
     float percentToSpawnAntimatter;
-    [SerializeField] Slider massSlider;
+    [SerializeField] Slider fusionsSlider;
 
     // Update is called once per frame
     void Update()
     {
-        if (massSlider.value / massSlider.maxValue < percentToSpawnAntimatter)
+        if (fusionsSlider.value / fusionsSlider.maxValue < percentToSpawnAntimatter)
             return;
 
         SpawnParticle();
