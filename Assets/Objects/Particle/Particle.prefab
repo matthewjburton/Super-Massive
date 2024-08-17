@@ -101,15 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef06a1607af0754dacba908af1714c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 0
-  speed: 2
-  growthModifer: 1.5
-  lerpDuration: 2
-  fusionSounds:
-  - {fileID: 8300000, guid: 45326df08515c024ca6e29c8d28bfdcf, type: 3}
-  maxAngleDeviation: 45
-  invincibilityDuration: 0.1
-  invincible: 0
+  stats: {fileID: 11400000, guid: 0f15cdc120855744ea3a7762934acfe0, type: 2}
 --- !u!114 &4011124137420937422
 MonoBehaviour:
   m_ObjectHideFlags: 0

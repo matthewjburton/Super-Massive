@@ -30,9 +30,38 @@ public class CutsceneManager : MonoBehaviour
     [Tooltip("Time for Big Bang prefab to exist")]
     [SerializeField] float bigBangDuration;
 
+    [SerializeField] TextMeshProUGUI skipText;
+    [SerializeField] bool skipIntroCutscene;
+
     void Start()
     {
         StartCoroutine(nameof(IntroCutscene));
+    }
+
+    void Update()
+    {
+        if (InputManager.Instance.SkipCutsceneInput)
+        {
+            skipIntroCutscene = true;
+        }
+
+        if (skipIntroCutscene)
+        {
+            StopCoroutine(nameof(IntroCutscene));
+
+            centerText.gameObject.SetActive(false);
+            skipText.gameObject.SetActive(false);
+
+            GameObject superPosition = GameObject.Find("Super Position(Clone)");
+            if (superPosition)
+                Destroy(superPosition);
+
+            GameObject bigBang = GameObject.Find("Big Bang(Clone)");
+            if (bigBang)
+                Destroy(bigBang);
+
+            StartGame();
+        }
     }
 
     IEnumerator IntroCutscene()
@@ -40,6 +69,10 @@ public class CutsceneManager : MonoBehaviour
         centerText.gameObject.SetActive(true);
         centerText.text = introDialogue[0];
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
+
+        skipText.gameObject.SetActive(true);
+        yield return StartCoroutine(FadeText(skipText, fadeDuration, 0, .6f));
+
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
 
@@ -55,11 +88,23 @@ public class CutsceneManager : MonoBehaviour
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
+
         centerText.text = introDialogue[2];
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
         centerText.gameObject.SetActive(false);
+
+        yield return StartCoroutine(FadeText(skipText, fadeDuration, .6f, 0));
+        skipText.gameObject.SetActive(false);
+
+        StartGame();
+    }
+
+    void StartGame()
+    {
+        centerText.text = "";
+        centerText.gameObject.SetActive(true);
 
         foreach (GameObject objectToActivate in activateAfterIntro)
         {
@@ -67,6 +112,8 @@ public class CutsceneManager : MonoBehaviour
         }
 
         Camera.main.GetComponent<CameraController>().enabled = true;
+
+        skipIntroCutscene = false;
     }
 
     void HandleFusion()

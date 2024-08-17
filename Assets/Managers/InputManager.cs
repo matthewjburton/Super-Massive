@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     public bool PauseInput { get; private set; }
     public Vector2 MousePositionInput { get; private set; }
     public bool LeftMouseInput { get; private set; }
+    public bool SkipCutsceneInput { get; private set; }
 
     // UI
     public bool UnpauseInput { get; private set; }
@@ -23,6 +24,7 @@ public class InputManager : MonoBehaviour
     InputAction pauseAction;
     InputAction mousePositionAction;
     InputAction leftMouseAction;
+    InputAction skipCutsceneAction;
 
     // UI actions
     InputAction unpauseAction;
@@ -51,6 +53,7 @@ public class InputManager : MonoBehaviour
         pauseAction = gameMap.FindAction("Pause", true);
         mousePositionAction = gameMap.FindAction("Mouse Position", true);
         leftMouseAction = gameMap.FindAction("Left Mouse", true);
+        skipCutsceneAction = gameMap.FindAction("Skip Cutscene", true);
 
         // UI actions
         unpauseAction = uiMap.FindAction("Unpause", true);
@@ -67,6 +70,7 @@ public class InputManager : MonoBehaviour
         PauseInput = pauseAction.WasPressedThisFrame();
         MousePositionInput = mousePositionAction.ReadValue<Vector2>();
         LeftMouseInput = leftMouseAction.IsPressed();
+        SkipCutsceneInput = skipCutsceneAction.IsPressed();
 
         // UI Inputs
         UnpauseInput = unpauseAction.WasPressedThisFrame();

@@ -7,7 +7,7 @@ public class ParticleManager : MonoBehaviour
     [SerializeField] float baseCooldownTime;
     [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
 
-    bool onCooldown = false;
+    bool onCooldown;
 
     // Update is called once per frame
     void Update()
