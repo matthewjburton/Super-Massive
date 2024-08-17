@@ -5597,6 +5597,7 @@ MonoBehaviour:
   readDuration: 2
   superPositionDuration: 3
   bigBangDuration: 2
+  bigBangSound: {fileID: 8300000, guid: b2801c745dbb7804f84f05a97bdea734, type: 3}
   skipText: {fileID: 546410829}
   skipIntroCutscene: 0
 --- !u!1 &1047530047

@@ -29,6 +29,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] float superPositionDuration;
     [Tooltip("Time for Big Bang prefab to exist")]
     [SerializeField] float bigBangDuration;
+    [SerializeField] AudioClip bigBangSound;
 
     [SerializeField] TextMeshProUGUI skipText;
     [SerializeField] bool skipIntroCutscene;
@@ -80,6 +81,7 @@ public class CutsceneManager : MonoBehaviour
         yield return new WaitForSeconds(superPositionDuration);
         Destroy(superPosition);
 
+        SoundManager.Instance.PlaySound(bigBangSound, transform);
         GameObject bigBang = Instantiate(introPrefabs[1], transform);
         yield return new WaitForSeconds(bigBangDuration);
         Destroy(bigBang);
