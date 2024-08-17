@@ -104,8 +104,12 @@ MonoBehaviour:
   mass: 0
   speed: 2
   growthModifer: 1.5
+  lerpDuration: 2
   fusionSounds:
   - {fileID: 8300000, guid: 45326df08515c024ca6e29c8d28bfdcf, type: 3}
+  maxAngleDeviation: 45
+  invincibilityDuration: 0.1
+  invincible: 0
 --- !u!114 &4011124137420937422
 MonoBehaviour:
   m_ObjectHideFlags: 0

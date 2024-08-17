@@ -2,31 +2,31 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Particle : MonoBehaviour
+public class AntiParticle : MonoBehaviour
 {
     public float mass;
     public float speed;
     [SerializeField] float growthModifer;
     [SerializeField] float lerpDuration = 1f; // Duration to lerp to the new speed
-    [SerializeField] AudioClip[] fusionSounds;
+    [SerializeField] AudioClip[] fusionSounds; // sounds for combining antiparticles
+    [SerializeField] AudioClip[] destroySounds; // sounds for destroying particles
+    [SerializeField] AudioClip[] reduceSounds; // sounds for reducing particles
     [SerializeField] float maxAngleDeviation = 45f; // Angle in degrees
-
 
     private float targetSpeed;
     private Coroutine speedLerpCoroutine;
     private Rigidbody2D rb;
 
     public static event Action<float> OnMassChanged; // Event for mass change
-    public static event Action OnFusion; // Event for particle fusion
+    public static event Action OnAntiParticleCreated; // Event for mass change
 
     void Start()
     {
+        OnAntiParticleCreated?.Invoke();
+
         mass = transform.localScale.x;
-        OnMassChanged?.Invoke(mass);
 
         rb = GetComponent<Rigidbody2D>();
-
-        rb.mass = mass;
 
         Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
         rb.velocity = direction * speed;
@@ -81,7 +81,19 @@ public class Particle : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Particle particle))
         {
-            if (particle.mass.Equals(mass))
+            if (particle.mass <= mass)
+            {
+                DestroyParticles(other.gameObject);
+            }
+            else
+            {
+                ReduceParticle(particle);
+            }
+        }
+
+        if (other.gameObject.TryGetComponent(out AntiParticle antiParticle))
+        {
+            if (antiParticle.mass.Equals(mass))
             {
                 CombineParticles(other.gameObject);
             }
@@ -102,10 +114,58 @@ public class Particle : MonoBehaviour
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
+    }
+
+    void DestroyParticles(GameObject other)
+    {
+        if (other.GetComponent<Particle>().invincible)
+            return;
+
+        Destroy(other);
+
+        SoundManager.Instance.PlayRandomSound(destroySounds, transform, UnityEngine.Random.Range(Math.Abs((1 - other.GetComponent<Particle>().mass) / 1), 1));
 
         // Notify listeners about the mass change
-        OnFusion?.Invoke();
+        OnMassChanged?.Invoke(mass);
+
+        Destroy(gameObject);
     }
+
+    void ReduceParticle(Particle particle)
+    {
+        if (particle.invincible)
+            return;
+
+        particle.Reduce(CalculateCombinations());
+
+        SoundManager.Instance.PlayRandomSound(reduceSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - particle.mass) / 1), 1));
+
+        // Notify listeners about the mass change
+        OnMassChanged?.Invoke(mass);
+
+        Destroy(gameObject);
+    }
+
+    float CalculateCombinations()
+    {
+        float initialMass = 1f;
+
+        if (Mathf.Log(growthModifer) == 0)
+        {
+            Debug.Log("Cant Divide by zero");
+            return 1;
+        }
+
+        float numberOfCombinations = Mathf.Log(mass / initialMass) / Mathf.Log(growthModifer) + 1;
+
+        if (numberOfCombinations == 0)
+        {
+            Debug.Log("Cant return zero");
+            return 1;
+        }
+        return numberOfCombinations;
+    }
+
 
     void OnEnvironmentChanged(Environment environment)
     {

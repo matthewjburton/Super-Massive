@@ -18,6 +18,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] GameObject massSlider;
 
     [Header("Antimatter")]
+    bool antiParticleCutscenePlayed;
     [SerializeField] string[] antimatterDialogue;
 
     [Tooltip("Time for text to fade in or out")]
@@ -53,9 +54,9 @@ public class CutsceneManager : MonoBehaviour
         centerText.text = introDialogue[1];
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
         yield return new WaitForSeconds(readDuration);
-        yield return StartCoroutine(FadeText(centerText, fadeDuration / 2, 1, 0));
+        yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
         centerText.text = introDialogue[2];
-        yield return StartCoroutine(FadeText(centerText, fadeDuration / 2, 0, 1));
+        yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
         centerText.gameObject.SetActive(false);
@@ -92,6 +93,26 @@ public class CutsceneManager : MonoBehaviour
 
     }
 
+    void HandleAntiParticleCreated()
+    {
+        if (antiParticleCutscenePlayed)
+            return;
+
+        StartCoroutine(nameof(AntiParticleCutscene));
+    }
+
+    IEnumerator AntiParticleCutscene()
+    {
+        antiParticleCutscenePlayed = true;
+
+        centerText.gameObject.SetActive(true);
+        centerText.text = antimatterDialogue[0];
+        yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
+        yield return new WaitForSeconds(readDuration);
+        yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
+        centerText.gameObject.SetActive(false);
+    }
+
     IEnumerator FadeText(TextMeshProUGUI textMeshPro, float duration, float start, float end)
     {
         Color color = textMeshPro.color;
@@ -116,10 +137,12 @@ public class CutsceneManager : MonoBehaviour
     void OnEnable()
     {
         Particle.OnFusion += HandleFusion;
+        AntiParticle.OnAntiParticleCreated += HandleAntiParticleCreated;
     }
 
     void OnDisable()
     {
         Particle.OnFusion -= HandleFusion;
+        AntiParticle.OnAntiParticleCreated -= HandleAntiParticleCreated;
     }
 }

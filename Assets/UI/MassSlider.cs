@@ -6,7 +6,7 @@ public class MassSlider : MonoBehaviour
     [SerializeField] float criticalMass;
     [SerializeField] float totalMass;
     [SerializeField] float massModifier;
-    Slider massSlider;
+    public Slider massSlider;
 
     void Start()
     {
@@ -15,25 +15,32 @@ public class MassSlider : MonoBehaviour
         massSlider.maxValue = criticalMass;
     }
 
-    void Update()
+    void HandleMassChanged(float mass)
     {
         GameObject[] particles = GameObject.FindGameObjectsWithTag("Particle");
-        float temporarySum = 0;
+        float maxMass = 0;
 
         foreach (GameObject particle in particles)
         {
             if (IsInView(particle))
-                temporarySum += Mathf.Pow(particle.GetComponent<Particle>().mass, massModifier);
+            {
+                float particleMass = 0;
+                if (particle.TryGetComponent(out Particle particleScript))
+                    particleMass = particleScript.mass;
+
+                if (particle.TryGetComponent(out AntiParticle antiParticleScript))
+                    particleMass = antiParticleScript.mass;
+
+                if (particleMass > maxMass)
+                {
+                    maxMass = particleMass;
+                }
+            }
         }
 
-        if (temporarySum > totalMass)
-        {
-            totalMass = temporarySum;
-        }
+        massSlider.value = maxMass;
 
-        massSlider.value = totalMass;
-
-        if (totalMass > criticalMass)
+        if (maxMass > criticalMass)
         {
             Debug.Log("Create a blackhole!");
         }
@@ -53,5 +60,17 @@ public class MassSlider : MonoBehaviour
                         viewportPoint.z > 0; // Ensure the particle is in front of the camera
 
         return isInView;
+    }
+
+    void OnEnable()
+    {
+        Particle.OnMassChanged += HandleMassChanged;
+        AntiParticle.OnMassChanged += HandleMassChanged;
+    }
+
+    void OnDisable()
+    {
+        Particle.OnMassChanged -= HandleMassChanged;
+        AntiParticle.OnMassChanged -= HandleMassChanged;
     }
 }
