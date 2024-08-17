@@ -58,18 +58,10 @@ public class Particle : MonoBehaviour
 
     void HandleMovement()
     {
-        if (rb != null)
-        {
-            // Calculate the new velocity based on the current speed and direction
-            Vector2 currentVelocity = rb.velocity;
-            float currentSpeed = currentVelocity.magnitude;
-            if (currentSpeed > 0)
-            {
-                // Maintain direction and apply new speed
-                Vector2 newVelocity = currentVelocity.normalized * speed;
-                rb.velocity = newVelocity;
-            }
-        }
+        if (rb == null)
+            return;
+
+        rb.velocity = rb.velocity.normalized * speed;
     }
 
     void OnTriggerEnter2D(Collider2D other)

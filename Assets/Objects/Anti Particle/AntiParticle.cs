@@ -13,6 +13,8 @@ public class AntiParticle : MonoBehaviour
     [SerializeField] AudioClip[] reduceSounds; // sounds for reducing particles
     [SerializeField] float maxAngleDeviation = 45f; // Angle in degrees
 
+    [SerializeField] GameObject destroyParticle;
+
     private float targetSpeed;
     private Coroutine speedLerpCoroutine;
     private Rigidbody2D rb;
@@ -129,6 +131,7 @@ public class AntiParticle : MonoBehaviour
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
 
+        Instantiate(destroyParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
@@ -145,6 +148,7 @@ public class AntiParticle : MonoBehaviour
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
 
+        Instantiate(destroyParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
