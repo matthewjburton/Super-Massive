@@ -96,14 +96,14 @@ public class Particle : MonoBehaviour
 
         transform.localScale /= stats.growthMultiplier * particleSize;
         mass = transform.localScale.x;
-        speed *= mass;
+        speed /= stats.speedMultiplier * particleSize;
     }
 
     void Grow()
     {
         transform.localScale *= stats.growthMultiplier;
         mass = transform.localScale.x;
-        speed /= mass;
+        speed *= stats.speedMultiplier;
     }
 
     IEnumerator HandleInvicibilty()

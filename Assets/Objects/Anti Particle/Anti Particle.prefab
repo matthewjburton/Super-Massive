@@ -100,19 +100,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e6ddcea986f4c438d650949c86815e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 11400000, guid: 30eaf50e09a6631478a98d1ac572e8fd, type: 2}
   mass: 0
   speed: 2
-  growthModifer: 1.5
-  lerpDuration: 1
-  fusionSounds:
-  - {fileID: 8300000, guid: 45326df08515c024ca6e29c8d28bfdcf, type: 3}
-  destroySounds:
-  - {fileID: 8300000, guid: 3faafb8e36a0b524984271b5893159b9, type: 3}
-  reduceSounds:
-  - {fileID: 8300000, guid: 8ab9435585d3340449663148f0e58720, type: 3}
-  - {fileID: 8300000, guid: 89bd25de3db08fe48bab3a3cc53bd5b0, type: 3}
-  maxAngleDeviation: 45
-  destroyParticle: {fileID: 8003185911289580921, guid: 5c24a53f7529e7d428bf59b7e9a92b26, type: 3}
 --- !u!58 &5533459110969910654
 CircleCollider2D:
   m_ObjectHideFlags: 0

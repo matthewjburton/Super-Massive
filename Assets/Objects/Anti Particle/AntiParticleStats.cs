@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Particle Stats", menuName = "ScriptableObjects/Particle Stats")]
-public class ParticleStats : ScriptableObject
+[CreateAssetMenu(fileName = "Anti Particle Stats", menuName = "ScriptableObjects/Anti Particle Stats")]
+public class AntiParticleStats : ScriptableObject
 {
     [Header("Mass")]
     [Min(0), Tooltip("The default mass of the particle")]
@@ -24,14 +24,15 @@ public class ParticleStats : ScriptableObject
     [Tooltip("The default color of the particle")]
     public Color defaultColor;
 
-    [Header("Invincibility")]
-    [Tooltip("How long a particle is invincible after being reduced")]
-    public float invincibilityDuration;
-
     [Header("Sounds")]
     public AudioClip[] fusionSounds;
+    public AudioClip[] destroySounds; // sounds for destroying particles
+    public AudioClip[] reduceSounds; // sounds for reducing particles
 
     [Header("Spawning")]
     [Range(0, 90), Tooltip("Angle in degrees the particle can deviate from directly towards the center of the screen")]
     public float maxAngleDeviation;
+
+    [Header("Death")]
+    public GameObject destroyParticle;
 }

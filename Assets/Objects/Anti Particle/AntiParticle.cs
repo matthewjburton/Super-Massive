@@ -1,20 +1,13 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AntiParticle : MonoBehaviour
 {
+    public AntiParticleStats stats;
     public float mass;
     public float speed;
-    [SerializeField] float growthModifer;
-    [SerializeField] float lerpDuration = 1f; // Duration to lerp to the new speed
-    [SerializeField] AudioClip[] fusionSounds; // sounds for combining antiparticles
-    [SerializeField] AudioClip[] destroySounds; // sounds for destroying particles
-    [SerializeField] AudioClip[] reduceSounds; // sounds for reducing particles
-    [SerializeField] float maxAngleDeviation = 45f; // Angle in degrees
-
-    [SerializeField] GameObject destroyParticle;
-
     private float targetSpeed;
     private Coroutine speedLerpCoroutine;
     private Rigidbody2D rb;
@@ -26,14 +19,15 @@ public class AntiParticle : MonoBehaviour
     {
         OnAntiParticleCreated?.Invoke();
 
-        mass = transform.localScale.x;
-
         rb = GetComponent<Rigidbody2D>();
 
-        Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
-        rb.velocity = direction * speed;
+        mass = stats.defaultMass;
+        transform.localScale = new(mass, mass);
 
-        // Subscribe to environment change event
+        speed = stats.defaultSpeed;
+        Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
+        rb.velocity = direction * stats.defaultSpeed;
+
         EnvironmentManager.OnEnvironmentChanged += OnEnvironmentChanged;
     }
 
@@ -49,7 +43,7 @@ public class AntiParticle : MonoBehaviour
         Vector2 directionToCamera = (cameraPosition - spawnPosition).normalized;
 
         // Generate a random angle within the specified range
-        float angle = UnityEngine.Random.Range(-maxAngleDeviation, maxAngleDeviation);
+        float angle = UnityEngine.Random.Range(-stats.maxAngleDeviation, stats.maxAngleDeviation);
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
         // Rotate the direction vector by the random angle
@@ -65,18 +59,10 @@ public class AntiParticle : MonoBehaviour
 
     void HandleMovement()
     {
-        if (rb != null)
-        {
-            // Calculate the new velocity based on the current speed and direction
-            Vector2 currentVelocity = rb.velocity;
-            float currentSpeed = currentVelocity.magnitude;
-            if (currentSpeed > 0)
-            {
-                // Maintain direction and apply new speed
-                Vector2 newVelocity = currentVelocity.normalized * speed;
-                rb.velocity = newVelocity;
-            }
-        }
+        if (rb == null)
+            return;
+
+        rb.velocity = rb.velocity.normalized * speed;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -106,11 +92,11 @@ public class AntiParticle : MonoBehaviour
     {
         Destroy(other);
 
-        SoundManager.Instance.PlayRandomSound(fusionSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - mass) / 1), 1));
+        SoundManager.Instance.PlayRandomSound(stats.fusionSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - mass) / 1), 1));
 
-        transform.localScale *= growthModifer;
+        transform.localScale *= stats.growthMultiplier;
         mass = transform.localScale.x;
-        speed /= mass;
+        speed *= stats.speedMultiplier;
 
         rb.mass = mass;
 
@@ -125,13 +111,13 @@ public class AntiParticle : MonoBehaviour
 
         Destroy(other);
 
-        SoundManager.Instance.PlayRandomSound(destroySounds, transform, UnityEngine.Random.Range(Math.Abs((1 - other.GetComponent<Particle>().mass) / 1), 1));
+        SoundManager.Instance.PlayRandomSound(stats.destroySounds, transform, UnityEngine.Random.Range(Math.Abs((1 - other.GetComponent<Particle>().mass) / 1), 1));
         ScreenShake.Instance.Shake(.1f, 0.1f);
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
 
-        Instantiate(destroyParticle, transform.position, Quaternion.identity);
+        Instantiate(stats.destroyParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
@@ -142,27 +128,25 @@ public class AntiParticle : MonoBehaviour
 
         particle.Reduce(CalculateCombinations());
 
-        SoundManager.Instance.PlayRandomSound(reduceSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - particle.mass) / 1), 1));
+        SoundManager.Instance.PlayRandomSound(stats.reduceSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - particle.mass) / 1), 1));
         ScreenShake.Instance.Shake(.1f, 0.1f);
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
 
-        Instantiate(destroyParticle, transform.position, Quaternion.identity);
+        Instantiate(stats.destroyParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
     float CalculateCombinations()
     {
-        float initialMass = 1f;
-
-        if (Mathf.Log(growthModifer) == 0)
+        if (Mathf.Log(stats.growthMultiplier) == 0)
         {
             Debug.Log("Cant Divide by zero");
             return 1;
         }
 
-        float numberOfCombinations = Mathf.Log(mass / initialMass) / Mathf.Log(growthModifer) + 1;
+        float numberOfCombinations = Mathf.Log(mass / stats.defaultMass) / Mathf.Log(stats.growthMultiplier) + 1;
 
         if (numberOfCombinations == 0)
         {
@@ -201,10 +185,10 @@ public class AntiParticle : MonoBehaviour
         float elapsedTime = 0f;
         float initialSpeed = speed;
 
-        while (elapsedTime < lerpDuration)
+        while (elapsedTime < stats.lerpDuration)
         {
             elapsedTime += Time.deltaTime;
-            speed = Mathf.Lerp(initialSpeed, newSpeed, elapsedTime / lerpDuration);
+            speed = Mathf.Lerp(initialSpeed, newSpeed, elapsedTime / stats.lerpDuration);
             yield return null;
         }
 
