@@ -5,9 +5,7 @@ public class ParticleManager : MonoBehaviour
 {
     [SerializeField] GameObject particle;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float voidCooldownMultiplier = 2f; // Multiplier to increase cooldown in void environment
-    [SerializeField] float maxAngleDeviation = 45f; // Angle in degrees
-    [SerializeField] float spawnOffset = 1.5f; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
 
     bool onCooldown = false;
 
@@ -22,19 +20,9 @@ public class ParticleManager : MonoBehaviour
         if (onCooldown)
             return;
 
-        Vector3 spawnPosition = GetRandomPositionOffCameraEdge();
-        GameObject newParticle = Instantiate(particle, spawnPosition, Quaternion.identity);
-
-        if (newParticle.TryGetComponent(out Rigidbody2D rb))
-        {
-            Vector2 direction = GetRandomDirectionTowardsCamera(spawnPosition);
-            float speed = newParticle.GetComponent<Particle>().speed;
-            rb.velocity = direction * speed;
-        }
-
+        Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
         StartCoroutine(nameof(Cooldown));
     }
-
     IEnumerator Cooldown()
     {
         onCooldown = true;
@@ -43,28 +31,11 @@ public class ParticleManager : MonoBehaviour
         var environmentManager = EnvironmentManager.Instance;
         float cooldownTime = baseCooldownTime;
 
-        if (environmentManager != null && environmentManager.currentEnvironment == EnvironmentManager.Environment.Void)
-        {
-            cooldownTime *= voidCooldownMultiplier; // Increase cooldown in Void environment
-        }
+        cooldownTime *= environmentManager.environment.spawnModifier;
 
         yield return new WaitForSeconds(cooldownTime);
+
         onCooldown = false;
-    }
-
-    Vector2 GetRandomDirectionTowardsCamera(Vector3 spawnPosition)
-    {
-        Vector3 cameraPosition = Camera.main.transform.position;
-        Vector2 directionToCamera = (cameraPosition - spawnPosition).normalized;
-
-        // Generate a random angle within the specified range
-        float angle = Random.Range(-maxAngleDeviation, maxAngleDeviation);
-        Quaternion rotation = Quaternion.Euler(0, 0, angle);
-
-        // Rotate the direction vector by the random angle
-        Vector2 randomDirection = rotation * directionToCamera;
-
-        return randomDirection.normalized;
     }
 
     Vector3 GetRandomPositionOffCameraEdge()
