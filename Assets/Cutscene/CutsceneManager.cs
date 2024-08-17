@@ -77,11 +77,13 @@ public class CutsceneManager : MonoBehaviour
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
 
+        ScreenShake.Instance.Shake(2f, .1f);
         GameObject superPosition = Instantiate(introPrefabs[0], transform);
         yield return new WaitForSeconds(superPositionDuration);
         Destroy(superPosition);
 
         SoundManager.Instance.PlaySound(bigBangSound, transform);
+        ScreenShake.Instance.Shake(.3f, 1f);
         GameObject bigBang = Instantiate(introPrefabs[1], transform);
         yield return new WaitForSeconds(bigBangDuration);
         Destroy(bigBang);

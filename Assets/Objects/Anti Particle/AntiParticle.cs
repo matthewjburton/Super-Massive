@@ -124,6 +124,7 @@ public class AntiParticle : MonoBehaviour
         Destroy(other);
 
         SoundManager.Instance.PlayRandomSound(destroySounds, transform, UnityEngine.Random.Range(Math.Abs((1 - other.GetComponent<Particle>().mass) / 1), 1));
+        ScreenShake.Instance.Shake(.1f, 0.1f);
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
@@ -139,6 +140,7 @@ public class AntiParticle : MonoBehaviour
         particle.Reduce(CalculateCombinations());
 
         SoundManager.Instance.PlayRandomSound(reduceSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - particle.mass) / 1), 1));
+        ScreenShake.Instance.Shake(.1f, 0.1f);
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
