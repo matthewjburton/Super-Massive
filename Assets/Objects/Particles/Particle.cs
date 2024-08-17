@@ -17,6 +17,7 @@ public class Particle : MonoBehaviour
     private Rigidbody2D rb;
 
     public static event Action<float> OnMassChanged; // Event for mass change
+    public static event Action OnFusion; // Event for particle fusion
 
     void Start()
     {
@@ -101,6 +102,9 @@ public class Particle : MonoBehaviour
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
+
+        // Notify listeners about the mass change
+        OnFusion?.Invoke();
     }
 
     void OnEnvironmentChanged(Environment environment)
