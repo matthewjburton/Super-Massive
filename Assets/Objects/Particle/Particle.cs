@@ -94,9 +94,12 @@ public class Particle : MonoBehaviour
     {
         StartCoroutine(nameof(HandleInvicibilty));
 
-        transform.localScale /= stats.growthMultiplier * particleSize;
-        mass = transform.localScale.x;
-        speed /= stats.speedMultiplier * particleSize;
+        for (int i = 0; i < particleSize; i++)
+        {
+            transform.localScale /= stats.growthMultiplier;
+            mass = transform.localScale.x;
+            speed /= stats.speedMultiplier;
+        }
     }
 
     void Grow()

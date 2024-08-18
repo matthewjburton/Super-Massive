@@ -15,7 +15,8 @@ public class CutsceneManager : MonoBehaviour
     [Header("Fusion")]
     bool fusionCustscenePlayed;
     [SerializeField] string[] fusionDialogue;
-    [SerializeField] GameObject massSlider;
+    [SerializeField] GameObject fusionsSlider;
+    [SerializeField] GameObject mostFusionsSlider;
 
     [Header("Antimatter")]
     bool antiParticleCutscenePlayed;
@@ -136,7 +137,8 @@ public class CutsceneManager : MonoBehaviour
         centerText.text = fusionDialogue[0];
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 0, 1));
 
-        massSlider.SetActive(true);
+        fusionsSlider.SetActive(true);
+        mostFusionsSlider.SetActive(true);
 
         yield return new WaitForSeconds(readDuration);
         yield return StartCoroutine(FadeText(centerText, fadeDuration, 1, 0));
