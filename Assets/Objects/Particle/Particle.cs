@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class Particle : MonoBehaviour
@@ -83,11 +84,35 @@ public class Particle : MonoBehaviour
 
         Grow();
 
+        GameObject fusionText = Instantiate(stats.fusionTextPrefab, transform.position, Quaternion.identity);
+        int index = Mathf.Min(Mathf.RoundToInt(CalculateCombinations()) - 2, stats.fusionTextList.Length);
+        fusionText.GetComponentInChildren<TextMeshProUGUI>().text = stats.fusionTextList[index];
+        fusionText.GetComponentInChildren<TextMeshProUGUI>().fontSize = 6 + (index * 2);
+        fusionText.GetComponentInChildren<TextMeshProUGUI>().color = stats.fusionColorList[index + 1];
+
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
 
         // Notify listeners about the mass change
         OnFusion?.Invoke();
+    }
+
+    float CalculateCombinations()
+    {
+        if (Mathf.Log(stats.growthMultiplier) == 0)
+        {
+            Debug.Log("Cant Divide by zero");
+            return 1;
+        }
+
+        float numberOfCombinations = Mathf.Log(mass / stats.defaultMass) / Mathf.Log(stats.growthMultiplier) + 1;
+
+        if (numberOfCombinations == 0)
+        {
+            Debug.Log("Cant return zero");
+            return 1;
+        }
+        return numberOfCombinations;
     }
 
     public void Reduce(float particleSize)

@@ -22,3 +22,20 @@ MonoBehaviour:
   fusionSounds:
   - {fileID: 8300000, guid: 45326df08515c024ca6e29c8d28bfdcf, type: 3}
   maxAngleDeviation: 45
+  fusionTextPrefab: {fileID: 2293058935763526074, guid: 11005029889b9644b9d2c267e6787272, type: 3}
+  fusionTextList:
+  - Fusion
+  - Bigger
+  - Humongous
+  - Gigantic
+  - Enormous
+  - Massive
+  - Super Massive
+  fusionColorList:
+  - {r: 1, g: 0.9733623, b: 0.6622641, a: 1}
+  - {r: 1, g: 0.76852024, b: 0.33018857, a: 1}
+  - {r: 1, g: 0.39647323, b: 0.216981, a: 1}
+  - {r: 1, g: 0.1490565, b: 0.44348636, a: 1}
+  - {r: 0.7824121, g: 0.10160909, b: 0.8037735, a: 1}
+  - {r: 0.35333565, g: 0.10630821, b: 0.7132075, a: 1}
+  - {r: 0.18653606, g: 0.40450943, b: 0.8037735, a: 1}

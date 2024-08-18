@@ -6396,7 +6396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a28d89aa4f677440b1ec3d2e3e18a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxFusions: 6
+  maxFusions: 7
   mostFusions: 0
   fusionsSlider: {fileID: 1696227850}
   mostFusionsSlider: {fileID: 854094186}

@@ -34,4 +34,9 @@ public class ParticleStats : ScriptableObject
     [Header("Spawning")]
     [Range(0, 90), Tooltip("Angle in degrees the particle can deviate from directly towards the center of the screen")]
     public float maxAngleDeviation;
+
+    [Header("Fusion Text")]
+    public GameObject fusionTextPrefab;
+    public string[] fusionTextList;
+    public Color[] fusionColorList;
 }
