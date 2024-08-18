@@ -24,9 +24,9 @@ public class AntiParticle : MonoBehaviour
         mass = stats.defaultMass;
         transform.localScale = new(mass, mass);
 
-        speed = stats.defaultSpeed;
+        speed = stats.defaultSpeed * EnvironmentManager.Instance.environment.speedMultiplier; ;
         Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
-        rb.velocity = direction * stats.defaultSpeed;
+        rb.velocity = direction * speed;
 
         EnvironmentManager.OnEnvironmentChanged += OnEnvironmentChanged;
     }
@@ -167,8 +167,11 @@ public class AntiParticle : MonoBehaviour
             case EnvironmentType.Void:
                 targetSpeed = speed * environment.speedMultiplier; // Example: Decrease speed in Void environment
                 break;
+            case EnvironmentType.Default:
+                targetSpeed = speed * environment.speedMultiplier; // Reset to a default range if needed
+                break;
             default:
-                targetSpeed = Mathf.Clamp(speed, 1f, 10f); // Reset to a default range if needed
+                Debug.Log("Environment not found!");
                 break;
         }
 

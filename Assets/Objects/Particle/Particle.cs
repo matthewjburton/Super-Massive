@@ -25,7 +25,7 @@ public class Particle : MonoBehaviour
 
         OnMassChanged?.Invoke(mass);
 
-        speed = stats.defaultSpeed;
+        speed = stats.defaultSpeed * EnvironmentManager.Instance.environment.speedMultiplier;
         Vector2 direction = GetRandomDirectionTowardsCamera(transform.position);
         rb.velocity = direction * stats.defaultSpeed;
 
@@ -85,10 +85,10 @@ public class Particle : MonoBehaviour
         Grow();
 
         GameObject fusionText = Instantiate(stats.fusionTextPrefab, transform.position, Quaternion.identity);
-        int index = Mathf.Min(Mathf.RoundToInt(CalculateCombinations()) - 2, stats.fusionTextList.Length);
+        int index = Mathf.Min(Mathf.RoundToInt(CalculateCombinations()) - 2, stats.fusionTextList.Length - 1);
         fusionText.GetComponentInChildren<TextMeshProUGUI>().text = stats.fusionTextList[index];
         fusionText.GetComponentInChildren<TextMeshProUGUI>().fontSize = 6 + (index * 2);
-        fusionText.GetComponentInChildren<TextMeshProUGUI>().color = stats.fusionColorList[index + 1];
+        fusionText.GetComponentInChildren<TextMeshProUGUI>().color = stats.fusionColorList[index];
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);
@@ -151,8 +151,11 @@ public class Particle : MonoBehaviour
             case EnvironmentType.Void:
                 targetSpeed = speed * environment.speedMultiplier; // Example: Decrease speed in Void environment
                 break;
+            case EnvironmentType.Default:
+                targetSpeed = speed * environment.speedMultiplier; // Reset to a default range if needed
+                break;
             default:
-                targetSpeed = Mathf.Clamp(speed, 1f, 10f); // Reset to a default range if needed
+                Debug.Log("Environment not found!");
                 break;
         }
 
