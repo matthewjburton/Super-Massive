@@ -1,10 +1,24 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class Draggable : MonoBehaviour
+public class DragManager : MonoBehaviour
 {
-    bool isDragging = false;
+    public static DragManager Instance;
+    [SerializeField] GameObject dragObject;
     readonly float clickableRadius = 0.1f;
     Vector3 mousePosition;
+
+    void Start()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Update()
     {
@@ -25,30 +39,29 @@ public class Draggable : MonoBehaviour
 
     void HandleMovement()
     {
-        if (!isDragging)
+        if (!dragObject)
             return;
 
-        transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+        dragObject.transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
     }
 
     void OnMouseDown()
     {
-        if (isDragging)
+        if (dragObject)
             return;
 
-        // Check if the mouse is within the clickable radius of the particle
         Collider2D collider = Physics2D.OverlapCircle(mousePosition, clickableRadius);
-        if (collider != null && collider.gameObject == gameObject)
+        if (collider && collider.GetComponent<Particle>())
         {
-            isDragging = true;
+            dragObject = collider.gameObject;
         }
     }
 
     void OnMouseUp()
     {
-        if (!isDragging)
+        if (!dragObject)
             return;
 
-        isDragging = false;
+        dragObject = null;
     }
 }
