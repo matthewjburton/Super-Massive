@@ -6,7 +6,7 @@ public class DragManager : MonoBehaviour
     public static DragManager Instance;
     [SerializeField] GameObject dragObject;
     readonly float clickableRadius = 0.1f;
-    Vector3 mousePosition;
+    Vector3 targetPosition;
 
     void Start()
     {
@@ -28,13 +28,34 @@ public class DragManager : MonoBehaviour
 
     void HandleInput()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.MousePositionInput);
+        // Mouse input
+        /*if (InputManager.Instance.CurrentControlScheme == InputManager.ControlScheme.Mouse)
+        {
 
-        if (InputManager.Instance.LeftMouseInput)
-            OnMouseDown();
+            if (InputManager.Instance.LeftMouseInput)
+            {
+                targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.MousePositionInput);
+                OnInputDown();
+            }
+            else
+            {
+                OnInputUp();
+            }
+        }*/
 
-        if (!InputManager.Instance.LeftMouseInput)
-            OnMouseUp();
+        // Touch input
+        if (InputManager.Instance.CurrentControlScheme == InputManager.ControlScheme.Touch)
+        {
+            if (InputManager.Instance.PrimaryTouchInput)
+            {
+                targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.PrimaryTouchPositionInput);
+                OnInputDown();
+            }
+            else
+            {
+                OnInputUp();
+            }
+        }
     }
 
     void HandleMovement()
@@ -42,22 +63,23 @@ public class DragManager : MonoBehaviour
         if (!dragObject)
             return;
 
-        dragObject.transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
+        Debug.Log(targetPosition);
+        dragObject.transform.position = new Vector3(targetPosition.x, targetPosition.y, dragObject.transform.position.z);
     }
 
-    void OnMouseDown()
+    void OnInputDown()
     {
         if (dragObject)
             return;
 
-        Collider2D collider = Physics2D.OverlapCircle(mousePosition, clickableRadius);
+        Collider2D collider = Physics2D.OverlapCircle(targetPosition, clickableRadius);
         if (collider && collider.GetComponent<Particle>())
         {
             dragObject = collider.gameObject;
         }
     }
 
-    void OnMouseUp()
+    void OnInputUp()
     {
         if (!dragObject)
             return;
