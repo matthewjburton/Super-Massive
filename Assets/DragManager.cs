@@ -5,7 +5,7 @@ public class DragManager : MonoBehaviour
 {
     public static DragManager Instance;
     [SerializeField] GameObject dragObject;
-    readonly float clickableRadius = 0.1f;
+    readonly float clickableRadius = 0.2f;
     Vector3 targetPosition;
 
     void Start()
@@ -28,33 +28,15 @@ public class DragManager : MonoBehaviour
 
     void HandleInput()
     {
-        // Mouse input
-        /*if (InputManager.Instance.CurrentControlScheme == InputManager.ControlScheme.Mouse)
-        {
-
-            if (InputManager.Instance.LeftMouseInput)
-            {
-                targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.MousePositionInput);
-                OnInputDown();
-            }
-            else
-            {
-                OnInputUp();
-            }
-        }*/
-
         // Touch input
-        if (InputManager.Instance.CurrentControlScheme == InputManager.ControlScheme.Touch)
+        if (InputManager.Instance.PrimaryTouchInput)
         {
-            if (InputManager.Instance.PrimaryTouchInput)
-            {
-                targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.PrimaryTouchPositionInput);
-                OnInputDown();
-            }
-            else
-            {
-                OnInputUp();
-            }
+            targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.PrimaryTouchPositionInput);
+            OnInputDown();
+        }
+        else
+        {
+            OnInputUp();
         }
     }
 
@@ -63,7 +45,6 @@ public class DragManager : MonoBehaviour
         if (!dragObject)
             return;
 
-        Debug.Log(targetPosition);
         dragObject.transform.position = new Vector3(targetPosition.x, targetPosition.y, dragObject.transform.position.z);
     }
 

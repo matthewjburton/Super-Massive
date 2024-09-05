@@ -31,7 +31,6 @@ public class InputManager : MonoBehaviour
     InputAction mousePositionAction;
     InputAction leftMouseAction;
     InputAction skipCutsceneAction;
-    InputAction primaryTouchAction;
 
     // UI actions
     InputAction unpauseAction;
@@ -63,7 +62,6 @@ public class InputManager : MonoBehaviour
         mousePositionAction = gameMap.FindAction("Mouse Position", true);
         leftMouseAction = gameMap.FindAction("Left Mouse", true);
         skipCutsceneAction = gameMap.FindAction("Skip Cutscene", true);
-        primaryTouchAction = gameMap.FindAction("Primary Touch", true);
 
         // UI actions
         unpauseAction = uiMap.FindAction("Unpause", true);
@@ -78,36 +76,71 @@ public class InputManager : MonoBehaviour
     void UpdateInputs()
     {
         // Player inputs
-        PauseInput = pauseAction.WasPressedThisFrame();
         MousePositionInput = mousePositionAction.ReadValue<Vector2>();
         LeftMouseInput = leftMouseAction.IsPressed();
-        SkipCutsceneInput = skipCutsceneAction.IsPressed();
-        PrimaryTouchInput = primaryTouchAction.IsPressed();
-        PrimaryTouchPositionInput = primaryTouchAction.ReadValue<Vector2>();
 
-        // Touch input
-        /*if (primaryTouchAction.triggered)
+        // Skip Cutscene input (Mouse or Tap)
+        bool tapDetected = false;
+
+        if (Touchscreen.current != null)
         {
-            PrimaryTouchInput = true;
-            PrimaryTouchPositionInput = primaryTouchAction.ReadValue<Vector2>();
+            foreach (var touch in Touchscreen.current.touches)
+            {
+                if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                {
+                    tapDetected = true;
+                    break;
+                }
+            }
+        }
+        SkipCutsceneInput = skipCutsceneAction.IsPressed() || tapDetected;
+
+        // Pause input (Escape or Two-Finger Tap)
+        bool twoFingerTap = false;
+
+        if (Touchscreen.current != null)
+        {
+            var touchCount = Touchscreen.current.touches.Count;
+            if (touchCount == 2)
+            {
+                var firstTouch = Touchscreen.current.touches[0];
+                var secondTouch = Touchscreen.current.touches[1];
+
+                if (firstTouch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began &&
+                    secondTouch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                {
+                    twoFingerTap = true;
+                }
+            }
+        }
+        PauseInput = pauseAction.WasPressedThisFrame() || twoFingerTap;
+
+        // Primary Touch input
+        if (Touchscreen.current != null)
+        {
+            var primaryTouch = Touchscreen.current.primaryTouch;
+
+            if (primaryTouch.isInProgress)
+            {
+                PrimaryTouchInput = true;
+                PrimaryTouchPositionInput = primaryTouch.position.ReadValue();
+            }
+            else
+            {
+                PrimaryTouchInput = false;
+            }
         }
         else
         {
             PrimaryTouchInput = false;
-        }*/
+        }
 
         // UI Inputs
-        UnpauseInput = unpauseAction.WasPressedThisFrame();
+        UnpauseInput = unpauseAction.WasPressedThisFrame() || twoFingerTap;
     }
 
     void UpdateControlScheme()
     {
-        // Check for mouse input
-        /*if (Mouse.current != null && Mouse.current.wasUpdatedThisFrame)
-        {
-            CurrentControlScheme = ControlScheme.Mouse;
-        }*/
-
         // Check for touch input
         if (Touchscreen.current != null && Touchscreen.current.wasUpdatedThisFrame)
         {
