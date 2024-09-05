@@ -1,11 +1,11 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class DragManager : MonoBehaviour
 {
     public static DragManager Instance;
     [SerializeField] GameObject dragObject;
-    readonly float clickableRadius = 0.2f;
+    [SerializeField] float defaultClickableRadius;
+    [SerializeField] float clickableRadius;
     Vector3 targetPosition;
 
     void Start()
@@ -53,6 +53,12 @@ public class DragManager : MonoBehaviour
         if (dragObject)
             return;
 
+        Debug.Log(CameraController.Instance.GetZoomStepCount());
+
+        // Scale the clickable radius based on the camera size
+        clickableRadius = defaultClickableRadius + (CameraController.Instance.GetZoomStepCount() * 0.1f);
+
+        // Check for particles within the scaled clickable radius
         Collider2D collider = Physics2D.OverlapCircle(targetPosition, clickableRadius);
         if (collider && collider.GetComponent<Particle>())
         {

@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.iOS;
 
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
     public static PlayerInput PlayerInput { get; private set; }
 
-    public enum ControlScheme { Mouse, Touch }
-    public ControlScheme CurrentControlScheme { get; private set; }
+    public static SystemGestureDeferMode deferSystemGesturesMode;
 
     // Game
     public bool PauseInput { get; private set; }
@@ -70,7 +70,6 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         UpdateInputs();
-        UpdateControlScheme();
     }
 
     void UpdateInputs()
@@ -137,14 +136,5 @@ public class InputManager : MonoBehaviour
 
         // UI Inputs
         UnpauseInput = unpauseAction.WasPressedThisFrame() || twoFingerTap;
-    }
-
-    void UpdateControlScheme()
-    {
-        // Check for touch input
-        if (Touchscreen.current != null && Touchscreen.current.wasUpdatedThisFrame)
-        {
-            CurrentControlScheme = ControlScheme.Touch;
-        }
     }
 }
