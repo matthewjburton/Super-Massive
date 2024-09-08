@@ -43,7 +43,7 @@ public class CameraController : MonoBehaviour
 
     void SetOrthographicSize()
     {
-        if (!ParticleManager.Instance.LargestParticle)
+        if (ParticleManager.Instance == null || ParticleManager.Instance.LargestParticle == null)
             return;
 
         GameObject largestParticle = ParticleManager.Instance.LargestParticle;

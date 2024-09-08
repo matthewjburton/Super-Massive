@@ -1,14 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.iOS;
 
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
     public static PlayerInput PlayerInput { get; private set; }
-
-    public static SystemGestureDeferMode deferSystemGesturesMode;
 
     // Game
     public bool PauseInput { get; private set; }
