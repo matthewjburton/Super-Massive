@@ -53,8 +53,6 @@ public class DragManager : MonoBehaviour
         if (dragObject)
             return;
 
-        Debug.Log(CameraController.Instance.GetZoomStepCount());
-
         // Scale the clickable radius based on the camera size
         clickableRadius = defaultClickableRadius + (CameraController.Instance.GetZoomStepCount() * 0.1f);
 
