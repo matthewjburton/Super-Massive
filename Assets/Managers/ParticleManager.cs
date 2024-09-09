@@ -32,9 +32,11 @@ public class ParticleManager : MonoBehaviour
         if (onCooldown)
             return;
 
-        Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        GameObject newParticle = Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+
         StartCoroutine(nameof(Cooldown));
     }
+
     IEnumerator Cooldown()
     {
         onCooldown = true;

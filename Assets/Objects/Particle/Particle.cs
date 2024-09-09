@@ -82,6 +82,8 @@ public class Particle : MonoBehaviour
 
         SoundManager.Instance.PlayRandomSound(stats.fusionSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - mass) / 1), 1));
 
+        Handheld.Vibrate();
+
         Grow();
 
         GameObject fusionText = Instantiate(stats.fusionTextPrefab, transform.position, Quaternion.identity);
@@ -97,7 +99,7 @@ public class Particle : MonoBehaviour
         OnFusion?.Invoke();
     }
 
-    float CalculateCombinations()
+    public float CalculateCombinations()
     {
         if (Mathf.Log(stats.growthMultiplier) == 0)
         {
@@ -127,7 +129,7 @@ public class Particle : MonoBehaviour
         }
     }
 
-    void Grow()
+    public void Grow()
     {
         transform.localScale *= stats.growthMultiplier;
         mass = transform.localScale.x;

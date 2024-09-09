@@ -130,6 +130,7 @@ public class AntiParticle : MonoBehaviour
 
         SoundManager.Instance.PlayRandomSound(stats.reduceSounds, transform, UnityEngine.Random.Range(Math.Abs((1 - particle.mass) / 1), 1));
         ScreenShake.Instance.Shake(.1f, 0.1f);
+        Handheld.Vibrate();
 
         // Notify listeners about the mass change
         OnMassChanged?.Invoke(mass);

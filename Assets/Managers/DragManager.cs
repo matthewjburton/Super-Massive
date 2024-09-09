@@ -22,6 +22,9 @@ public class DragManager : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.Instance.IsPaused)
+            return;
+
         HandleInput();
         HandleMovement();
     }

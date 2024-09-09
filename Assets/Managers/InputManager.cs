@@ -91,25 +91,25 @@ public class InputManager : MonoBehaviour
         }
         SkipCutsceneInput = skipCutsceneAction.IsPressed() || tapDetected;
 
-        // Pause input (Escape or Two-Finger Tap)
-        bool twoFingerTap = false;
-
+        // Pause input (Escape or Multi-Finger Tap)
+        bool multiFingerTap = false;
         if (Touchscreen.current != null)
         {
-            var touchCount = Touchscreen.current.touches.Count;
-            if (touchCount == 2)
+            var touches = Touchscreen.current.touches;
+            if (touches.Count >= 2)
             {
-                var firstTouch = Touchscreen.current.touches[0];
-                var secondTouch = Touchscreen.current.touches[1];
+                var touch1 = touches[0];
+                var touch2 = touches[1];
 
-                if (firstTouch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began &&
-                    secondTouch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                // Check if both touches are in progress and recently started (for example)
+                if (touch1.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began &&
+                    touch2.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
                 {
-                    twoFingerTap = true;
+                    multiFingerTap = true;
                 }
             }
         }
-        PauseInput = pauseAction.WasPressedThisFrame() || twoFingerTap;
+        PauseInput = pauseAction.WasPressedThisFrame() || multiFingerTap;
 
         // Primary Touch input
         if (Touchscreen.current != null)
@@ -132,6 +132,6 @@ public class InputManager : MonoBehaviour
         }
 
         // UI Inputs
-        UnpauseInput = unpauseAction.WasPressedThisFrame() || twoFingerTap;
+        UnpauseInput = unpauseAction.WasPressedThisFrame() || multiFingerTap;
     }
 }
