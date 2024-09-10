@@ -57,11 +57,14 @@ public class DragManager : MonoBehaviour
             return;
 
         // Scale the clickable radius based on the camera size
-        clickableRadius = defaultClickableRadius + (CameraController.Instance.GetZoomStepCount() * 0.1f);
+        if (MatterManager.Instance && MatterManager.Instance.LargestMatter && MatterManager.Instance.LargestMatter.GetComponent<Matter>())
+            clickableRadius = defaultClickableRadius + MatterManager.Instance.LargestMatter.GetComponent<Matter>().fusions * 0.1f;
+        else
+            clickableRadius = defaultClickableRadius;
 
         // Check for particles within the scaled clickable radius
         Collider2D collider = Physics2D.OverlapCircle(targetPosition, clickableRadius);
-        if (collider && collider.GetComponent<Particle>())
+        if (collider && collider.GetComponent<Matter>())
         {
             dragObject = collider.gameObject;
         }

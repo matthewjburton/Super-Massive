@@ -101,8 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 30eaf50e09a6631478a98d1ac572e8fd, type: 2}
-  mass: 0
+  fusions: 0
   speed: 2
+  invincible: 0
+  antiMatterStats: {fileID: 11400000, guid: 30eaf50e09a6631478a98d1ac572e8fd, type: 2}
 --- !u!58 &5533459110969910654
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -199,4 +201,4 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4

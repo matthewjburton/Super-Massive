@@ -5538,7 +5538,7 @@ GameObject:
   - component: {fileID: 921054711}
   - component: {fileID: 921054712}
   m_Layer: 0
-  m_Name: Main Menu Particle Manager
+  m_Name: Menu Matter Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5571,7 +5571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02492bb587bf00e42918a75b1e7375c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particle: {fileID: 8000110299745620049, guid: 0d2c978887590f74ba8e3447d71f335d, type: 3}
+  menuMatter: {fileID: 5154684587459430200, guid: 7c7639b12db739d40a61e08cef4eb103, type: 3}
   baseCooldownTime: 1.5
   spawnOffset: 1.1
 --- !u!1 &1311812553

@@ -19,22 +19,16 @@ public class FusionsSlider : MonoBehaviour
 
     void Update()
     {
-        mostFusions = CalculateCombinations(ParticleManager.Instance.LargestParticle.GetComponent<Particle>());
+        mostFusions = MatterManager.Instance.LargestMatter.GetComponent<Matter>().fusions;
         fusionsSlider.value = mostFusions;
 
         if (mostFusions > mostFusionsSlider.value)
             mostFusionsSlider.value = mostFusions;
-
 
         if (fusionsSlider.value > maxFusions)
         {
             fusionsSlider.maxValue++;
             mostFusionsSlider.maxValue++;
         }
-    }
-
-    int CalculateCombinations(Particle particle)
-    {
-        return (int)(Mathf.Log(particle.mass / particle.stats.defaultMass) / Mathf.Log(particle.stats.growthMultiplier));
     }
 }

@@ -9,33 +9,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 267221722ac09c349949d5d3bdb4a923, type: 3}
-  m_Name: Particle Stats
+  m_Script: {fileID: 11500000, guid: 7298b06c858c5f145a3d8bce7fa13890, type: 3}
+  m_Name: Matter Stats
   m_EditorClassIdentifier: 
   defaultMass: 1
-  growthMultiplier: 1.5
+  sizeMultiplier: 1.5
   defaultSpeed: 2
   lerpDuration: 1
-  speedMultiplier: 0.8
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   invincibilityDuration: 0.2
   fusionSounds:
   - {fileID: 8300000, guid: 45326df08515c024ca6e29c8d28bfdcf, type: 3}
-  maxAngleDeviation: 45
+  maxAngleDeviation: 30
   fusionTextPrefab: {fileID: 2293058935763526074, guid: 11005029889b9644b9d2c267e6787272, type: 3}
   fusionTextList:
   - Fusion
   - Bigger
-  - Humongous
+  - Humungous
   - Gigantic
   - Enormous
   - Massive
   - Super Massive
   fusionColorList:
-  - {r: 0.1881737, g: 0.93207544, b: 0.50158834, a: 1}
-  - {r: 0.97735846, g: 0.70313084, b: 0.18256311, a: 1}
-  - {r: 1, g: 0.46479318, b: 0.2320754, a: 1}
-  - {r: 0.97735846, g: 0.11617652, b: 0.41382, a: 1}
-  - {r: 0.95255876, g: 0.1383053, b: 0.97735846, a: 1}
-  - {r: 0.5705747, g: 0.22857237, b: 0.98490566, a: 1}
-  - {r: 0.111320674, g: 0.679071, b: 1, a: 1}
+  - {r: 0.035294116, g: 1, b: 0.4588353, a: 1}
+  - {r: 1, g: 0.80696106, b: 0, a: 1}
+  - {r: 0.9607843, g: 0.49484944, b: 0.19607839, a: 1}
+  - {r: 0.9254902, g: 0.09411762, b: 0.44592565, a: 1}
+  - {r: 1, g: 0, b: 0.8841014, a: 1}
+  - {r: 0.46318913, g: 0, b: 1, a: 1}
+  - {r: 0.23921567, g: 0.76907676, b: 1, a: 1}

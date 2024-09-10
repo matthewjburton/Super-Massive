@@ -2,34 +2,34 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AntiParticleManager : MonoBehaviour
+public class AntiMatterManager : MonoBehaviour
 {
-    [SerializeField] GameObject antiParticle;
+    [SerializeField] GameObject antiMatter;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting Matters beyond the edge
 
     bool onCooldown = false;
 
     [Header("Controlling when antimatter starts spawing")]
     [Min(0), SerializeField, Tooltip("A decimal representing the percent of mass towards critical mass that the player must reach before spawning spawning antimatter")]
-    int combinationsToSpawnAntimatter;
+    int fusionsToSpawnAntimatter;
     [SerializeField] Slider fusionsSlider;
 
     // Update is called once per frame
     void Update()
     {
-        if (fusionsSlider.GetComponent<FusionsSlider>().mostFusions < combinationsToSpawnAntimatter)
+        if (fusionsSlider.GetComponent<FusionsSlider>().mostFusions < fusionsToSpawnAntimatter)
             return;
 
-        SpawnParticle();
+        SpawnMatter();
     }
 
-    void SpawnParticle()
+    void SpawnMatter()
     {
         if (onCooldown)
             return;
 
-        Instantiate(antiParticle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        Instantiate(antiMatter, GetRandomPositionOffCameraEdge(), Quaternion.identity);
         StartCoroutine(nameof(Cooldown));
     }
     IEnumerator Cooldown()

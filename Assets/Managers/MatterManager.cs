@@ -2,13 +2,13 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-public class ParticleManager : MonoBehaviour
+public class MatterManager : MonoBehaviour
 {
-    public static ParticleManager Instance { get; private set; }
-    public GameObject LargestParticle { get; private set; }
-    [SerializeField] GameObject particle;
+    public static MatterManager Instance { get; private set; }
+    public GameObject LargestMatter { get; private set; }
+    [SerializeField] GameObject matter;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting matters beyond the edge
 
     bool onCooldown;
 
@@ -23,16 +23,16 @@ public class ParticleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SpawnParticle();
-        UpdateLargestParticle();
+        SpawnMatter();
+        UpdateLargestMatter();
     }
 
-    void SpawnParticle()
+    void SpawnMatter()
     {
         if (onCooldown)
             return;
 
-        GameObject newParticle = Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        Instantiate(matter, GetRandomPositionOffCameraEdge(), Quaternion.identity);
 
         StartCoroutine(nameof(Cooldown));
     }
@@ -86,15 +86,15 @@ public class ParticleManager : MonoBehaviour
         return position;
     }
 
-    void UpdateLargestParticle()
+    void UpdateLargestMatter()
     {
-        // Find the largest particle currently on screen
-        var particles = FindObjectsOfType<Particle>()
+        // Find the largest Matter currently on screen
+        var matters = FindObjectsOfType<Matter>()
             .Where(p => IsInView(p.transform.position)) // Filter to only those in view
-            .OrderByDescending(p => p.mass) // Order by mass, descending
+            .OrderByDescending(p => p.fusions) // Order by mass, descending
             .FirstOrDefault();
 
-        LargestParticle = particles?.gameObject;
+        LargestMatter = matters?.gameObject;
     }
 
     bool IsInView(Vector3 worldPosition)

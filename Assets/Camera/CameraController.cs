@@ -43,12 +43,12 @@ public class CameraController : MonoBehaviour
 
     void SetOrthographicSize()
     {
-        if (ParticleManager.Instance == null || ParticleManager.Instance.LargestParticle == null)
+        if (MatterManager.Instance == null || MatterManager.Instance.LargestMatter == null)
             return;
 
-        GameObject largestParticle = ParticleManager.Instance.LargestParticle;
+        GameObject largestParticle = MatterManager.Instance.LargestMatter;
 
-        targetOrthographicSize = largestParticle.GetComponent<Particle>().mass * settings.sizeMultiplier + settings.minSize;
+        targetOrthographicSize = largestParticle.GetComponent<Matter>().fusions * settings.sizeMultiplier + settings.minSize;
 
         // Smoothly transition to the target orthographic size
         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, Time.deltaTime * settings.zoomSpeed);
