@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Void Environment
   m_EditorClassIdentifier: 
   environment: 2
-  spawnModifier: 3
+  spawnModifier: 1.5
   speedMultiplier: 0.4
-  backgroundColor: {r: 0.06829807, g: 0.06743324, b: 0.12452829, a: 0}
+  backgroundColor: {r: 0.09359204, g: 0.09359204, b: 0.20754719, a: 0}
   showStars: 0

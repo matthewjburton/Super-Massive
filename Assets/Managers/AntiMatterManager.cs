@@ -1,38 +1,35 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ParticleManager : MonoBehaviour
+public class AntiMatterManager : MonoBehaviour
 {
-    public static ParticleManager Instance { get; private set; }
-    public GameObject LargestParticle { get; private set; }
-    [SerializeField] GameObject particle;
+    [SerializeField] GameObject antiMatter;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting Matters beyond the edge
 
-    bool onCooldown;
+    bool onCooldown = false;
 
-    void Start()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(this);
-    }
+    [Header("Controlling when antimatter starts spawing")]
+    [Min(0), SerializeField, Tooltip("A decimal representing the percent of mass towards critical mass that the player must reach before spawning spawning antimatter")]
+    int fusionsToSpawnAntimatter;
+    [SerializeField] Slider fusionsSlider;
 
     // Update is called once per frame
     void Update()
     {
-        SpawnParticle();
-        UpdateLargestParticle();
+        if (fusionsSlider.GetComponent<FusionsSlider>().mostFusions < fusionsToSpawnAntimatter)
+            return;
+
+        SpawnMatter();
     }
 
-    void SpawnParticle()
+    void SpawnMatter()
     {
         if (onCooldown)
             return;
 
-        Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        Instantiate(antiMatter, GetRandomPositionOffCameraEdge(), Quaternion.identity);
         StartCoroutine(nameof(Cooldown));
     }
     IEnumerator Cooldown()
@@ -82,24 +79,5 @@ public class ParticleManager : MonoBehaviour
         position.z = 0;
 
         return position;
-    }
-
-    void UpdateLargestParticle()
-    {
-        // Find the largest particle currently on screen
-        var particles = FindObjectsOfType<Particle>()
-            .Where(p => IsInView(p.transform.position)) // Filter to only those in view
-            .OrderByDescending(p => p.mass) // Order by mass, descending
-            .FirstOrDefault();
-
-        LargestParticle = particles?.gameObject;
-    }
-
-    bool IsInView(Vector3 worldPosition)
-    {
-        Vector3 viewportPosition = Camera.main.WorldToViewportPoint(worldPosition);
-        return viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
-               viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
-               viewportPosition.z > 0; // z > 0 means the object is in front of the camera
     }
 }

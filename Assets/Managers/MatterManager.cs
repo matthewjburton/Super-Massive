@@ -1,37 +1,42 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class AntiParticleManager : MonoBehaviour
+public class MatterManager : MonoBehaviour
 {
-    [SerializeField] GameObject antiParticle;
+    public static MatterManager Instance { get; private set; }
+    public GameObject LargestMatter { get; private set; }
+    [SerializeField] GameObject matter;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting matters beyond the edge
 
-    bool onCooldown = false;
+    bool onCooldown;
 
-    [Header("Controlling when antimatter starts spawing")]
-    [Min(0), SerializeField, Tooltip("A decimal representing the percent of mass towards critical mass that the player must reach before spawning spawning antimatter")]
-    int combinationsToSpawnAntimatter;
-    [SerializeField] Slider fusionsSlider;
+    void Start()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (fusionsSlider.GetComponent<FusionsSlider>().mostFusions < combinationsToSpawnAntimatter)
-            return;
-
-        SpawnParticle();
+        SpawnMatter();
+        UpdateLargestMatter();
     }
 
-    void SpawnParticle()
+    void SpawnMatter()
     {
         if (onCooldown)
             return;
 
-        Instantiate(antiParticle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        Instantiate(matter, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+
         StartCoroutine(nameof(Cooldown));
     }
+
     IEnumerator Cooldown()
     {
         onCooldown = true;
@@ -79,5 +84,24 @@ public class AntiParticleManager : MonoBehaviour
         position.z = 0;
 
         return position;
+    }
+
+    void UpdateLargestMatter()
+    {
+        // Find the largest Matter currently on screen
+        var matters = FindObjectsOfType<Matter>()
+            .Where(p => IsInView(p.transform.position)) // Filter to only those in view
+            .OrderByDescending(p => p.fusions) // Order by mass, descending
+            .FirstOrDefault();
+
+        LargestMatter = matters?.gameObject;
+    }
+
+    bool IsInView(Vector3 worldPosition)
+    {
+        Vector3 viewportPosition = Camera.main.WorldToViewportPoint(worldPosition);
+        return viewportPosition.x >= 0 && viewportPosition.x <= 1 &&
+               viewportPosition.y >= 0 && viewportPosition.y <= 1 &&
+               viewportPosition.z > 0; // z > 0 means the object is in front of the camera
     }
 }

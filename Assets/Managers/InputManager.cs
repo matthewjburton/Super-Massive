@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class InputManager : MonoBehaviour
     public Vector2 MousePositionInput { get; private set; }
     public bool LeftMouseInput { get; private set; }
     public bool SkipCutsceneInput { get; private set; }
+    public bool PrimaryTouchInput { get; private set; }
+    public Vector2 PrimaryTouchPositionInput { get; private set; }
 
     // UI
     public bool UnpauseInput { get; private set; }
@@ -31,6 +34,8 @@ public class InputManager : MonoBehaviour
 
     void Awake()
     {
+        TouchSimulation.Enable();
+
         if (Instance == null)
         {
             Instance = this;
@@ -67,12 +72,66 @@ public class InputManager : MonoBehaviour
     void UpdateInputs()
     {
         // Player inputs
-        PauseInput = pauseAction.WasPressedThisFrame();
         MousePositionInput = mousePositionAction.ReadValue<Vector2>();
         LeftMouseInput = leftMouseAction.IsPressed();
-        SkipCutsceneInput = skipCutsceneAction.IsPressed();
+
+        // Skip Cutscene input (Mouse or Tap)
+        bool tapDetected = false;
+
+        if (Touchscreen.current != null)
+        {
+            foreach (var touch in Touchscreen.current.touches)
+            {
+                if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                {
+                    tapDetected = true;
+                    break;
+                }
+            }
+        }
+        SkipCutsceneInput = skipCutsceneAction.IsPressed() || tapDetected;
+
+        // Pause input (Escape or Multi-Finger Tap)
+        bool multiFingerTap = false;
+        if (Touchscreen.current != null)
+        {
+            var touches = Touchscreen.current.touches;
+            if (touches.Count >= 2)
+            {
+                var touch1 = touches[0];
+                var touch2 = touches[1];
+
+                // Check if both touches are in progress and recently started (for example)
+                if (touch1.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began &&
+                    touch2.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                {
+                    multiFingerTap = true;
+                }
+            }
+        }
+        PauseInput = pauseAction.WasPressedThisFrame() || multiFingerTap;
+
+        // Primary Touch input
+        if (Touchscreen.current != null)
+        {
+            var primaryTouch = Touchscreen.current.primaryTouch;
+
+            if (primaryTouch.isInProgress)
+            {
+                PrimaryTouchInput = true;
+                PrimaryTouchPositionInput = primaryTouch.position.ReadValue();
+            }
+            else
+            {
+                PrimaryTouchInput = false;
+            }
+        }
+        else
+        {
+            PrimaryTouchInput = false;
+        }
 
         // UI Inputs
-        UnpauseInput = unpauseAction.WasPressedThisFrame();
+        UnpauseInput = unpauseAction.WasPressedThisFrame() || multiFingerTap;
     }
 }

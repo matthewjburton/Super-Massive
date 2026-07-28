@@ -15,5 +15,5 @@ MonoBehaviour:
   environment: 1
   spawnModifier: 0.5
   speedMultiplier: 2
-  backgroundColor: {r: 0.18490559, g: 0.16455434, b: 0.12385185, a: 0}
+  backgroundColor: {r: 0.23018861, g: 0.20137884, b: 0.1437593, a: 0}
   showStars: 1

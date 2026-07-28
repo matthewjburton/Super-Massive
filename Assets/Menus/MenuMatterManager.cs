@@ -1,26 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-public class MainMenuParticleManager : MonoBehaviour
+public class MenuMatterManager : MonoBehaviour
 {
-    [SerializeField] GameObject particle;
+    [SerializeField] GameObject menuMatter;
     [SerializeField] float baseCooldownTime;
-    [SerializeField] float spawnOffset; // Multiplier for offsetting particles beyond the edge
+    [SerializeField] float spawnOffset; // Multiplier for offsetting Matters beyond the edge
 
     bool onCooldown;
 
     // Update is called once per frame
     void Update()
     {
-        SpawnParticle();
+        SpawnMatter();
     }
 
-    void SpawnParticle()
+    void SpawnMatter()
     {
         if (onCooldown)
             return;
 
-        Instantiate(particle, GetRandomPositionOffCameraEdge(), Quaternion.identity);
+        Instantiate(menuMatter, GetRandomPositionOffCameraEdge(), Quaternion.identity);
         StartCoroutine(nameof(Cooldown));
     }
     IEnumerator Cooldown()

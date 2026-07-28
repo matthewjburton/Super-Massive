@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6387746480757342578}
   - component: {fileID: -51746672964359967}
   m_Layer: 0
-  m_Name: Destroy Particle
+  m_Name: Destroy Matter Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

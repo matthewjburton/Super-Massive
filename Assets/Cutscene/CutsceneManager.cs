@@ -19,7 +19,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] GameObject mostFusionsSlider;
 
     [Header("Antimatter")]
-    bool antiParticleCutscenePlayed;
+    bool antiMatterCutscenePlayed;
     [SerializeField] string[] antimatterDialogue;
 
     [Tooltip("Time for text to fade in or out")]
@@ -146,17 +146,17 @@ public class CutsceneManager : MonoBehaviour
 
     }
 
-    void HandleAntiParticleCreated()
+    void HandleAntiMatterCreated()
     {
-        if (antiParticleCutscenePlayed)
+        if (antiMatterCutscenePlayed)
             return;
 
-        StartCoroutine(nameof(AntiParticleCutscene));
+        StartCoroutine(nameof(AntiMatterCutscene));
     }
 
-    IEnumerator AntiParticleCutscene()
+    IEnumerator AntiMatterCutscene()
     {
-        antiParticleCutscenePlayed = true;
+        antiMatterCutscenePlayed = true;
 
         centerText.gameObject.SetActive(true);
         centerText.text = antimatterDialogue[0];
@@ -190,12 +190,12 @@ public class CutsceneManager : MonoBehaviour
     void OnEnable()
     {
         Particle.OnFusion += HandleFusion;
-        AntiParticle.OnAntiParticleCreated += HandleAntiParticleCreated;
+        AntiMatter.OnAntiMatterCreated += HandleAntiMatterCreated;
     }
 
     void OnDisable()
     {
         Particle.OnFusion -= HandleFusion;
-        AntiParticle.OnAntiParticleCreated -= HandleAntiParticleCreated;
+        AntiMatter.OnAntiMatterCreated -= HandleAntiMatterCreated;
     }
 }

@@ -2,10 +2,22 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance { get; private set; }
     [SerializeField] CameraSettings settings;
-    float largestMass;
     float targetOrthographicSize;
     Color targetBackgroundColor;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void OnEnable()
     {
@@ -31,11 +43,12 @@ public class CameraController : MonoBehaviour
 
     void SetOrthographicSize()
     {
-        GameObject largestParticle = ParticleManager.Instance.LargestParticle;
-        if (!largestParticle)
+        if (MatterManager.Instance == null || MatterManager.Instance.LargestMatter == null)
             return;
 
-        targetOrthographicSize = largestParticle.GetComponent<Particle>().mass * settings.sizeMultiplier + settings.minSize;
+        GameObject largestParticle = MatterManager.Instance.LargestMatter;
+
+        targetOrthographicSize = largestParticle.GetComponent<Matter>().fusions * settings.sizeMultiplier + settings.minSize;
 
         // Smoothly transition to the target orthographic size
         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, Time.deltaTime * settings.zoomSpeed);
@@ -45,5 +58,11 @@ public class CameraController : MonoBehaviour
     {
         // Smoothly transition to the target background color
         Camera.main.backgroundColor = Color.Lerp(Camera.main.backgroundColor, targetBackgroundColor, Time.deltaTime * settings.backgroundSpeed);
+    }
+
+    public int GetZoomStepCount()
+    {
+        // Calculate how many times the camera has zoomed out
+        return Mathf.FloorToInt((Camera.main.orthographicSize - settings.minSize) / settings.sizeMultiplier);
     }
 }
