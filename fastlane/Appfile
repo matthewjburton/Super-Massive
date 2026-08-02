@@ -1,0 +1,7 @@
+# Portable across games: the bundle id and team come from the environment (set by the
+# reusable CI workflow), so this file needs no per-repo edits.
+app_identifier(ENV["APP_ID"])
+team_id(ENV["APPLE_TEAM_ID"])
+
+# Authentication uses the App Store Connect API key (set in the Fastfile's before_all from
+# secrets), so no Apple ID / apple_id() is needed here.

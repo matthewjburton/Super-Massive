@@ -1,0 +1,114 @@
+default_platform(:ios)
+
+# Signs and ships the Unity-generated Xcode project to TestFlight / the App Store.
+#
+# Signing strategy: fastlane match. A distribution certificate + App Store provisioning
+# profile are stored (encrypted) in the MATCH_GIT_URL repo and installed into a temporary CI
+# keychain, then both Unity targets are switched to MANUAL signing against them. This is
+# deterministic on a headless runner - unlike automatic signing, which needs an interactive
+# Apple account and fails with "No Accounts" in CI.
+
+# Per-app values come from the environment (set by the reusable CI workflow, or export them
+# for a local run) so this file is identical across every game and needs no per-repo edits.
+APP_ID     = ENV["APP_ID"] || abort("APP_ID env var is required (e.g. com.you.game)")
+BUILD_NAME = ENV["BUILD_NAME"] || "app"
+# GameCI nests the project under the build name. CI overrides this via XCODE_PROJECT after
+# locating the .xcodeproj; the fallback covers local runs.
+XCODEPROJ  = ENV["XCODE_PROJECT"] || "build/iOS/#{BUILD_NAME}/Unity-iPhone.xcodeproj"
+# Unity always generates this scheme and these two targets, for every iOS project.
+SCHEME     = "Unity-iPhone"
+
+platform :ios do
+  before_all do
+    # One API key drives version lookups, match's cert/profile management, and the upload.
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      is_key_content_base64: true,
+      in_house: false
+    )
+    # On CI, create a throwaway keychain for match to install the signing identity into.
+    # No-op off CI.
+    setup_ci
+  end
+
+  desc "Build and upload a TestFlight build"
+  lane :beta do
+    build_and_upload
+  end
+
+  desc "Build and upload to App Store Connect (still requires manual submit for review)"
+  lane :release do
+    build_and_upload
+  end
+
+  # --- shared implementation ------------------------------------------------
+
+  private_lane :build_and_upload do
+    # Fetch (or create, on first run) the App Store distribution cert + provisioning profile
+    # via match, using the API key to talk to the portal. git_url / password come from the
+    # MATCH_GIT_URL and MATCH_PASSWORD env vars. readonly:false so the first run can create
+    # them; later runs just reuse what's in the repo.
+    match(
+      type: "appstore",
+      app_identifier: APP_ID,
+      readonly: false
+    )
+
+    profile_name = ENV["sigh_#{APP_ID}_appstore_profile-name"]
+
+    # Switch both Unity targets to manual signing against the match identity. The app target
+    # gets the provisioning profile; the embedded UnityFramework only needs the distribution
+    # identity (frameworks don't carry their own profile).
+    update_code_signing_settings(
+      path: XCODEPROJ,
+      targets: "Unity-iPhone",
+      use_automatic_signing: false,
+      team_id: ENV["APPLE_TEAM_ID"],
+      code_sign_identity: "Apple Distribution",
+      bundle_identifier: APP_ID,
+      profile_name: profile_name
+    )
+    update_code_signing_settings(
+      path: XCODEPROJ,
+      targets: "UnityFramework",
+      use_automatic_signing: false,
+      team_id: ENV["APPLE_TEAM_ID"],
+      code_sign_identity: "Apple Distribution"
+    )
+
+    # CFBundleVersion must be unique and rising. Take the highest build already on TestFlight
+    # for this version and go one past it, so reruns never collide.
+    version = get_version_number(xcodeproj: XCODEPROJ, target: "Unity-iPhone")
+    next_build = (latest_testflight_build_number(
+      version: version,
+      initial_build_number: 0
+    ) rescue 0) + 1
+
+    increment_build_number(
+      xcodeproj: XCODEPROJ,
+      build_number: next_build
+    )
+
+    build_app(
+      project: XCODEPROJ,           # a plain .xcodeproj: Unity adds no CocoaPods here
+      scheme: SCHEME,
+      export_method: "app-store",
+      output_directory: "build/output",
+      output_name: "#{BUILD_NAME}.ipa",
+      export_options: {
+        signingStyle: "manual",
+        teamID: ENV["APPLE_TEAM_ID"],
+        provisioningProfiles: { APP_ID => profile_name }
+      }
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      # `beta` stops here (TestFlight). Promoting to App Store review stays a deliberate
+      # manual step in the console.
+      distribute_external: false
+    )
+  end
+end

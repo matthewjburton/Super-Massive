@@ -1,0 +1,41 @@
+name: iOS (TestFlight)
+
+# Thin caller for the reusable Unity -> iOS -> TestFlight pipeline, which lives in the central
+# matthewjburton/ci-workflows repo. This file only wires up the triggers and passes this game's
+# three per-app values. See that repo's docs/ios-unity-testflight.md for the full guide.
+
+on:
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "Fastlane lane to run"
+        type: choice
+        default: beta
+        options: [beta, release]
+  # Validate the Unity build on PRs into main (build job only - the reusable workflow gates the
+  # TestFlight upload to workflow_dispatch, so PRs catch compile errors without spending macOS
+  # minutes or pushing a premature build).
+  pull_request:
+    branches: [main]
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+      - "fastlane/**"
+      - ".github/workflows/ios*.yml"
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testflight:
+    # Pinned to the moving v1 major version of the shared pipeline: auto-adopts backward-
+    # compatible improvements; breaking changes ship as v2 and require bumping this ref.
+    uses: matthewjburton/ci-workflows/.github/workflows/ios-testflight-reusable.yml@v1
+    with:
+      unity_version: 2022.3.32f1                    # keep in sync with ProjectSettings/ProjectVersion.txt
+      bundle_id: com.Matt-Burton-Games.Super-Massive
+      build_name: SuperMassive
+      lane: ${{ github.event.inputs.lane || 'beta' }}
+    secrets: inherit
